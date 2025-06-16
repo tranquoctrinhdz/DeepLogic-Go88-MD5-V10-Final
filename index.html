@@ -1,0 +1,146 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tool Dự Đoán Tài/Xỉu Go88</title>
+  <style>
+    body {
+      background-color: #111;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 20px;
+    }
+
+    h1 {
+      color: #00ff99;
+      margin-bottom: 20px;
+      font-size: 28px;
+    }
+
+    input[type="text"], input[type="number"] {
+      width: 90%;
+      max-width: 400px;
+      padding: 12px;
+      font-size: 18px;
+      border-radius: 8px;
+      border: none;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    button {
+      background-color: #00ff99;
+      color: #000;
+      border: none;
+      padding: 12px 24px;
+      font-size: 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background-color: #00cc77;
+    }
+
+    #result {
+      margin-top: 20px;
+      font-size: 28px;
+      font-weight: bold;
+      color: #ffcc00;
+    }
+
+    #suggestion {
+      margin-top: 10px;
+      font-size: 18px;
+      color: #00ffff;
+    }
+
+    #history {
+      margin-top: 30px;
+      font-size: 16px;
+      color: #ccc;
+      max-height: 200px;
+      overflow-y: auto;
+      border-top: 1px solid #333;
+      padding-top: 10px;
+    }
+
+    .footer {
+      margin-top: 40px;
+      font-size: 14px;
+      color: #777;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Tool Dự Đoán Tài/Xỉu Go88</h1>
+
+  <input type="number" id="vonInput" placeholder="Nhập số vốn (VNĐ)" />
+  <br>
+  <input type="text" id="md5Input" placeholder="Nhập mã MD5 tại đây" />
+  <br>
+  <button onclick="duDoan()">Dự Đoán</button>
+
+  <div id="result"></div>
+  <div id="suggestion"></div>
+  <div id="history"></div>
+
+  <div class="footer">
+    Cre: Trần Quốc Trịnh – Trùm Kéo Thuê Go88
+  </div>
+
+  <script>
+    let history = [];
+    let countTai = 0;
+    let countXiu = 0;
+
+    function duDoan() {
+      const von = parseFloat(document.getElementById("vonInput").value);
+      const md5Input = document.getElementById("md5Input");
+      const md5 = md5Input.value.trim();
+
+      if (md5.length !== 32) {
+        alert("Mã MD5 không hợp lệ. Vui lòng nhập đúng 32 ký tự.");
+        return;
+      }
+
+      let hex = md5.slice(0, 6);
+      let total = parseInt(hex, 16);
+      let ketQua = total % 2 === 0 ? "XỈU" : "TÀI";
+
+      // Cập nhật thống kê
+      if (ketQua === "TÀI") countTai++;
+      else countXiu++;
+
+      const totalCount = countTai + countXiu;
+      const percentTai = ((countTai / totalCount) * 100).toFixed(1);
+      const percentXiu = ((countXiu / totalCount) * 100).toFixed(1);
+
+      document.getElementById("result").innerText = "KẾT QUẢ: " + ketQua;
+
+      // Gợi ý tiền cược
+      if (!isNaN(von) && von > 0) {
+        const goiY = Math.round(von * 0.4);
+        document.getElementById("suggestion").innerText = "Gợi ý cược: " + goiY.toLocaleString() + " VNĐ";
+      } else {
+        document.getElementById("suggestion").innerText = "";
+      }
+
+      // Cập nhật lịch sử
+      history.unshift("[" + ketQua + "] " + md5.toUpperCase());
+      if (history.length > 10) history.pop();
+      document.getElementById("history").innerHTML =
+        "<b>Lịch sử dự đoán:</b><br>" + history.join("<br>") +
+        `<br><br><b>Thống kê:</b> TÀI – ${percentTai}% | XỈU – ${percentXiu}%`;
+
+      md5Input.value = "";
+    }
+  </script>
+
+</body>
+</html>
